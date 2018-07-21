@@ -230,8 +230,13 @@ static IMP originalPrepareForSegueMethodImp;
         }
     }
     else if (self.presentingViewController) {
-        assert(!transitionHandler && "not implemented");
-        [self dismissViewControllerAnimated:animated completion:completion];
+        [self.presentingViewController dismissViewControllerAnimated:animated completion:^{
+            if (completion) {
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    completion();
+                });
+            }
+        }];
     }
     else if (self.view.superview != nil){
         assert(!transitionHandler && "not implemented");
