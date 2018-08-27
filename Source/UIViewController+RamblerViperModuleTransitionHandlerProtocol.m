@@ -173,9 +173,16 @@ static IMP originalPrepareForSegueMethodImp;
 - (RamblerViperOpenModulePromise*)openModuleUsingFactory:(id <RamblerViperModuleFactoryProtocol>)moduleFactory withTransitionBlock:(ModuleTransitionBlock)transitionBlock {
     RamblerViperOpenModulePromise *openModulePromise = [[RamblerViperOpenModulePromise alloc] init];
     id<RamblerViperModuleTransitionHandlerProtocol> destinationModuleTransitionHandler = [moduleFactory instantiateModuleTransitionHandler];
+    id<RamblerViperModuleTransitionHandlerProtocol> targetModuleTransitionHandler = destinationModuleTransitionHandler;
     id<RamblerViperModuleInput> moduleInput = nil;
-    if ([destinationModuleTransitionHandler respondsToSelector:@selector(moduleInput)]) {
-        moduleInput = [destinationModuleTransitionHandler moduleInput];
+
+    if ([targetModuleTransitionHandler isKindOfClass:[UINavigationController class]]) {
+      UINavigationController *navigationController = targetModuleTransitionHandler;
+      targetModuleTransitionHandler = navigationController.topViewController;
+    }
+    
+    if ([targetModuleTransitionHandler respondsToSelector:@selector(moduleInput)]) {
+        moduleInput = [targetModuleTransitionHandler moduleInput];
     }
 
     openModulePromise.moduleInput = moduleInput;
