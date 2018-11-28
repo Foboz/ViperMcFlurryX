@@ -178,7 +178,9 @@ static IMP originalPrepareForSegueMethodImp;
 
     if ([targetModuleTransitionHandler isKindOfClass:[UINavigationController class]]) {
       UINavigationController *navigationController = targetModuleTransitionHandler;
-      targetModuleTransitionHandler = navigationController.topViewController;
+      if (navigationController.topViewController) {
+        targetModuleTransitionHandler = navigationController.topViewController;
+      }
     }
     
     if ([targetModuleTransitionHandler respondsToSelector:@selector(moduleInput)]) {
